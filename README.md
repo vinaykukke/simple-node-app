@@ -71,6 +71,12 @@ async function getZipFile(name: string, files: File[]): Promise<File> {
 
 For the resolution to succeed, a valid file must eventually be found. webpack then reads the resolved paths, and should resolve to the same module.
 
+# Code
+There are 3 ways of writing/ implementing the `index` file where the fetch is made
+ * The regular way of just using `fetch` on the client that is shown in `index.ts`
+ * The `async` way, that is using `async ... await` that is shown in `index.async.ts`
+ * The `generator` way, that is using `generators` that is shown in `index.generator.ts`
+
 # Big O
 
 I think that the total Complexity of the algorithm is `O(n^2) + O(n^2) + O(n log(n)) + O(n)`. For large values of `n` its safe to assume that `n >> log(n) && n^2 >> n`. By this assumption we can reduce the Complexity to `O(2n^2) + O(2n)` OR `O(n^2) + O(n)` by safely removing the smaller terms and constants.
