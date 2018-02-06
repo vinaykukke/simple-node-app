@@ -1,4 +1,5 @@
 import { IApp } from 'Types';
+import { IDivProps, IHtmlElement } from './types';
 
 class Card {
   private hostName: string;
@@ -20,11 +21,22 @@ class Card {
     }
   }
 
+  private div(props: IDivProps): HTMLDivElement {
+    const { className, id, text } = props;
+    const div = document.createElement('div');
+
+    className && div.setAttribute('class', className);
+    id && div.setAttribute('id', id);
+    text && (div.innerHTML = text);
+
+    return div;
+  }
+
   private createNodes() {
     const root = document.getElementById('root');
-    const card = document.createElement('div');
-    const cardHeader = document.createElement('div');
-    const cardBody = document.createElement('div');
+    const card = this.div({className: 'card inline', id: 'card'});
+    const cardHeader = this.div({className: 'card-header'});
+    const cardBody = this.div({className: 'card-body', id: `card-${this.hostName}`, text: this.hostName});
     const input = document.getElementById('input-checkbox');
     const eventHandler = () => {
       if ( card.className.indexOf('inline') !== -1 ) {
@@ -33,13 +45,6 @@ class Card {
         card.className += ' inline';
       }
     };
-
-    card.className = 'card inline';
-    card.id = 'card';
-    cardHeader.className = 'card-header';
-    cardBody.className = 'card-body';
-    cardBody.id = `card-${this.hostName}`;
-    cardHeader.innerHTML = this.hostName;
 
     // Remove any existing event listners
     input.removeEventListener('click', eventHandler);
