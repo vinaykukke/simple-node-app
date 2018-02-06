@@ -1,5 +1,4 @@
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const babelConf = require('./.babelrc.json');
 
 module.exports = {
@@ -28,9 +27,6 @@ module.exports = {
       },
     ]
   },
-  plugins: [
-    new UglifyJsPlugin(),
-  ],
   resolve: {
     alias: {
       Types: path.resolve(__dirname, '..', 'client', 'types'),

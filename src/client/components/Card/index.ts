@@ -1,5 +1,20 @@
 import { IApp } from 'Types';
-import { IDivProps, IHtmlElement } from './types';
+import { IDivProps } from './types';
+
+// https://stackoverflow.com/questions/40456231/typescript-module-augmentation-overwrites-the-original-module
+// TYPESCRIPT MODULE AUGMENTATION: to overwrite the original module
+// This is now in global scope, but you can declare modules as well
+declare global {
+  interface HTMLElement {
+    removeAllClicks: (eventHandler: any) => void;
+  }
+}
+
+// Extending the DOM is very bad practice.
+// Refer: http://perfectionkills.com/whats-wrong-with-extending-the-dom/
+HTMLElement.prototype.removeAllClicks = (eventHandler) => {
+  this.removeEventListner('click', eventHandler)
+}
 
 class Card {
   private hostName: string;
@@ -21,22 +36,26 @@ class Card {
     }
   }
 
-  private div(props: IDivProps): HTMLDivElement {
-    const { className, id, text } = props;
-    const div = document.createElement('div');
+  private createElement(props: IDivProps): HTMLElement {
+    const { className, id, text, element } = props;
+    const createdElement = document.createElement(element);
 
-    className && div.setAttribute('class', className);
-    id && div.setAttribute('id', id);
-    text && (div.innerHTML = text);
+    className && createdElement.setAttribute('class', className);
+    id && createdElement.setAttribute('id', id);
+    text && (createdElement.innerHTML = text);
 
-    return div;
+    return createdElement;
   }
 
   private createNodes() {
     const root = document.getElementById('root');
-    const card = this.div({className: 'card inline', id: 'card'});
-    const cardHeader = this.div({className: 'card-header'});
-    const cardBody = this.div({className: 'card-body', id: `card-${this.hostName}`, text: this.hostName});
+    const card = this.createElement({element: 'div', className: 'card inline', id: 'card'});
+    const cardHeader = this.createElement({element: 'div', className: 'card-header', text: this.hostName});
+    const cardBody = this.createElement({
+      element: 'div',
+      className: 'card-body',
+      id: `card-${this.hostName}`,
+    });
     const input = document.getElementById('input-checkbox');
     const eventHandler = () => {
       if ( card.className.indexOf('inline') !== -1 ) {
@@ -47,6 +66,8 @@ class Card {
     };
 
     // Remove any existing event listners
+
+    // input.removeAllClicks(eventHandler);
     input.removeEventListener('click', eventHandler);
     input.addEventListener('click', eventHandler);
 
@@ -57,12 +78,9 @@ class Card {
 
   private fillNodes(app: IApp) {
     const cardBody = document.getElementById(`card-${this.hostName}`);
-    const div = document.createElement('div');
-    const p1 = document.createElement('p');
-    const p2 = document.createElement('p');
-
-    p1.className = 'apdex';
-    p2.className = 'app-name';
+    const div = this.createElement({element: 'div'});
+    const p1 = this.createElement({element: 'p', className: 'apdex'});
+    const p2 = this.createElement({element: 'p', className: 'app-name'});
 
     div.appendChild(p1).innerHTML = app.apdex.toString();
     div.appendChild(p2).innerHTML = app.name;
