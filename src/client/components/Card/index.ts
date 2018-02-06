@@ -1,5 +1,5 @@
 import { IApp } from 'Types';
-import { IDivProps } from './types';
+import { IElementProps } from './types';
 
 // https://stackoverflow.com/questions/40456231/typescript-module-augmentation-overwrites-the-original-module
 // TYPESCRIPT MODULE AUGMENTATION: to overwrite the original module
@@ -36,25 +36,33 @@ class Card {
     }
   }
 
-  private createElement(props: IDivProps): HTMLElement {
-    const { className, id, text, element } = props;
+  private createElement(props: IElementProps): HTMLElement {
+    const { attributes, element } = props;
     const createdElement = document.createElement(element);
 
-    className && createdElement.setAttribute('class', className);
-    id && createdElement.setAttribute('id', id);
-    text && (createdElement.innerHTML = text);
+    for (let attr in attributes) {
+      createdElement.setAttribute(attr, attributes[attr]);
+    }
 
     return createdElement;
   }
 
   private createNodes() {
     const root = document.getElementById('root');
-    const card = this.createElement({element: 'div', className: 'card inline', id: 'card'});
-    const cardHeader = this.createElement({element: 'div', className: 'card-header', text: this.hostName});
+    const card = this.createElement({element: 'div', attributes: {class: 'card inline', id: 'card'}});
+    const cardHeader = this.createElement({
+      element: 'div',
+      attributes: {
+        class: 'card-header',
+        innerHTML: this.hostName
+      }
+    });
     const cardBody = this.createElement({
       element: 'div',
-      className: 'card-body',
-      id: `card-${this.hostName}`,
+      attributes: {
+        class: 'card-body',
+        id: `card-${this.hostName}`,
+      }
     });
     const input = document.getElementById('input-checkbox');
     const eventHandler = () => {
@@ -79,8 +87,8 @@ class Card {
   private fillNodes(app: IApp) {
     const cardBody = document.getElementById(`card-${this.hostName}`);
     const div = this.createElement({element: 'div'});
-    const p1 = this.createElement({element: 'p', className: 'apdex'});
-    const p2 = this.createElement({element: 'p', className: 'app-name'});
+    const p1 = this.createElement({element: 'p', attributes: {class: 'apdex'}});
+    const p2 = this.createElement({element: 'p', attributes: {class: 'app-name'}});
 
     div.appendChild(p1).innerHTML = app.apdex.toString();
     div.appendChild(p2).innerHTML = app.name;

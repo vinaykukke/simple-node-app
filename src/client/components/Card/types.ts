@@ -1,6 +1,8 @@
-export interface IDivProps {
+export interface IElementProps {
   element: string;
-  className?: string;
-  id?: string;
-  text?: string;
+  attributes?: {
+    class?: string;
+    id?: string;
+    innerHTML?: string;
+  }
 }
